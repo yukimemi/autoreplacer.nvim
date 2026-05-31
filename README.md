@@ -71,6 +71,18 @@ require("autoreplacer").setup({
 for you, so `( ) + ? | {2,4}` work bare and only literal metacharacters need
 escaping (e.g. `\.`). Add a leading `\c` for case-insensitive matching.
 
+Very magic is close to PCRE, but a few ASCII characters are operators rather
+than literals. When you mean them **literally**, escape or class them:
+
+| Want literal | Write | Why |
+| --- | --- | --- |
+| `=` | `\=` | bare `=` means "0 or 1 of the previous atom" (like `?`) |
+| `<` `>` | `[<]` `[>]` | bare `<` `>` are word boundaries |
+| `{` `}` | match around them, e.g. `[^"]*` | the regex engine is unreliable matching literal braces |
+
+For example, an XML `key="...version">` value is matched with
+`[[\c^(.*key\="[^"]*version"[>])[^<]*([<].*)]]`.
+
 ### Replacements
 
 `with` replaces the **whole match** and is either:
