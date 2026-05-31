@@ -25,12 +25,29 @@ be a string template **or a Lua function**, so there is no string-eval DSL.
 
 ## Install
 
-With [lazy.nvim](https://github.com/folke/lazy.nvim):
+With [rvpm](https://github.com/yukimemi/rvpm) (recommended):
+
+```sh
+rvpm add yukimemi/autoreplacer.nvim --on-event BufReadPre,BufNewFile --on-cmd '/^AutoReplacer.*$/'
+```
+
+Or in `config.toml`:
+
+```toml
+[[plugins]]
+url = "https://github.com/yukimemi/autoreplacer.nvim"
+on_event = ["BufReadPre", "BufNewFile"]
+on_cmd = ["/^AutoReplacer.*$/"]
+```
+
+> rvpm doesn't auto-run `setup()` — when you pass options, call `require("autoreplacer").setup({ ... })` from a hook file (`plugins/github.com/yukimemi/autoreplacer.nvim/after.lua`).
+
+Or with [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
   "yukimemi/autoreplacer.nvim",
-  event = { "BufRead", "BufNewFile" },
+  event = { "BufReadPre", "BufNewFile" },
   opts = {},
 }
 ```
