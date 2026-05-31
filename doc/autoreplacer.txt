@@ -1,0 +1,75 @@
+*autoreplacer.txt*  Apply regex replacement rules to a buffer on save
+
+==============================================================================
+INTRODUCTION                                                    *autoreplacer*
+
+autoreplacer.nvim applies regex replacement rules to a buffer on save — bump a
+`Last Change:` timestamp, a `version = "..."` field, and so on. Patterns are
+ordinary regular expressions; replacements are a string template or a Lua
+function (no string-eval DSL).
+
+Pure Lua, Neovim only. Requires Neovim >= 0.10.
+
+==============================================================================
+SETUP                                                     *autoreplacer-setup*
+
+>lua
+    require("autoreplacer").setup({
+      notify = false,
+      log_level = "warn",
+      enabled = true,
+      rules = {
+        {
+          name = "last-change",
+          patterns = { "*" },
+          events = { "BufWritePre" },
+          range = { head = 15, tail = 15 },
+          replace = {
+            {
+              pattern = [[(.*Last Change.*: ).*\.$]],
+              with = function(m)
+                return m[1] .. os.date("%Y/%m/%d %H:%M:%S") .. "."
+              end,
+            },
+          },
+        },
+      },
+    })
+<
+
+PATTERNS                                               *autoreplacer-patterns*
+
+`pattern` is an ordinary regular expression; very magic (`\v`) is prepended, so
+`( ) + ? | {2,4}` work bare and only literal metacharacters need escaping
+(`\.`). A leading `\c` makes the match case-insensitive.
+
+REPLACEMENTS                                       *autoreplacer-replacements*
+
+`with` replaces the whole match and is either a string template (`\0`..`\9`
+expand to captures) or a function receiving `m` (`m[0]` whole match, `m[1]`,
+`m[2]`, ... groups) and returning the replacement.
+
+==============================================================================
+COMMANDS                                                *autoreplacer-commands*
+
+                                                            *:AutoReplacerRun*
+:AutoReplacerRun     Run all matching rules on the current buffer now.
+
+           *:AutoReplacerEnable* *:AutoReplacerDisable* *:AutoReplacerToggle*
+:AutoReplacerEnable  Resume / pause / toggle automatic replacement.
+:AutoReplacerDisable
+:AutoReplacerToggle
+
+==============================================================================
+LUA API                                                     *autoreplacer-api*
+
+    require("autoreplacer").run()       ~
+    require("autoreplacer").enable()    ~
+    require("autoreplacer").disable()   ~
+
+==============================================================================
+HEALTH                                                   *autoreplacer-health*
+
+    :checkhealth autoreplacer
+
+ vim:tw=78:ts=8:ft=help:norl:
