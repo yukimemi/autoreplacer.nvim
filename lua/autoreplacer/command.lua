@@ -23,7 +23,9 @@ function M.register()
   cmd("AutoReplacerToggle", function()
     local state = require("autoreplacer.state")
     state.enabled = not state.enabled
-    require("autoreplacer.log").echo(state.enabled and "automatic replacement enabled" or "automatic replacement disabled")
+    require("autoreplacer.log").echo(
+      state.enabled and "automatic replacement enabled" or "automatic replacement disabled"
+    )
   end, "autoreplacer: toggle automatic replacement")
 end
 

@@ -25,11 +25,13 @@ function M.check()
   else
     ok(("%d rule(s) configured"):format(#rules))
     for _, rule in ipairs(rules) do
-      info(("- %s: %d replacement(s), events=%s"):format(
-        rule.name or "(unnamed)",
-        #(rule.replace or {}),
-        table.concat(rule.events or { "BufWritePre" }, ",")
-      ))
+      info(
+        ("- %s: %d replacement(s), events=%s"):format(
+          rule.name or "(unnamed)",
+          #(rule.replace or {}),
+          table.concat(rule.events or { "BufWritePre" }, ",")
+        )
+      )
     end
   end
 end
