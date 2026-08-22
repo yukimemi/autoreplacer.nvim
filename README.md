@@ -38,9 +38,17 @@ Or in `config.toml`:
 url = "https://github.com/yukimemi/autoreplacer.nvim"
 on_event = ["BufReadPre", "BufNewFile"]
 on_cmd = ["/^AutoReplacer.*$/"]
+opts = {}
 ```
 
-> rvpm doesn't auto-run `setup()` — when you pass options, call `require("autoreplacer").setup({ ... })` from a hook file (`plugins/github.com/yukimemi/autoreplacer.nvim/after.lua`).
+> Here `setup()` is **required**: the commands come up either way, but nothing
+> is switched automatically until `require("autoreplacer").setup(...)` installs the
+> autocmds. **rvpm >= 3.45.0 handles it for you** — put `opts = {}` (or your
+> options) in the `[[plugins]]` entry and rvpm calls
+> `require("autoreplacer").setup(<opts>)` right before the plugin's `after.lua`
+> (same convention as lazy.nvim's `opts`). Use a hook
+> (`rvpm edit yukimemi/autoreplacer.nvim --after`) only when the options need a Lua
+> function, which TOML cannot express.
 
 Or with [lazy.nvim](https://github.com/folke/lazy.nvim):
 
