@@ -28,8 +28,12 @@ be a string template **or a Lua function**, so there is no string-eval DSL.
 With [rvpm](https://github.com/yukimemi/rvpm) (recommended):
 
 ```sh
-rvpm add yukimemi/autoreplacer.nvim --on-event BufReadPre,BufNewFile --on-cmd '/^AutoReplacer.*$/'
+rvpm add yukimemi/autoreplacer.nvim --on-event BufReadPre,BufNewFile --on-cmd '/^AutoReplacer.*$/' --setup '{}'
 ```
+
+`--setup` takes a TOML inline table, so a bare
+`rvpm add yukimemi/autoreplacer.nvim --setup '{}'` is enough to register the
+plugin and have rvpm call `setup()` with no options.
 
 Or in `config.toml`:
 
@@ -38,17 +42,21 @@ Or in `config.toml`:
 url = "https://github.com/yukimemi/autoreplacer.nvim"
 on_event = ["BufReadPre", "BufNewFile"]
 on_cmd = ["/^AutoReplacer.*$/"]
-opts = {}
+setup = {}
 ```
 
 > Here `setup()` is **required**: the commands come up either way, but nothing
 > is switched automatically until `require("autoreplacer").setup(...)` installs the
-> autocmds. **rvpm >= 3.45.0 handles it for you** — put `opts = {}` (or your
-> options) in the `[[plugins]]` entry and rvpm calls
-> `require("autoreplacer").setup(<opts>)` right before the plugin's `after.lua`
-> (same convention as lazy.nvim's `opts`). Use a hook
-> (`rvpm edit yukimemi/autoreplacer.nvim --after`) only when the options need a Lua
-> function, which TOML cannot express.
+> autocmds. **rvpm >= 3.48.0 handles it for you** — the presence of a `setup`
+> field in the `[[plugins]]` entry makes rvpm call
+> `require("autoreplacer").setup(<opts>)` right before the plugin's `after.lua`.
+> `setup = {}` calls it with no options; `setup = { notify = false }` passes that
+> table straight through. Use a hook
+> (`rvpm edit yukimemi/autoreplacer.nvim --after`) when the options need a Lua
+> function, which TOML cannot express — and if a single `setup()` call needs both
+> plain data and a Lua function, keep the whole call in `after.lua` and drop the
+> `setup` field. Never set the plugin up from both places: calling
+> `require("autoreplacer").setup(...)` twice is a configuration error.
 
 Or with [lazy.nvim](https://github.com/folke/lazy.nvim):
 
